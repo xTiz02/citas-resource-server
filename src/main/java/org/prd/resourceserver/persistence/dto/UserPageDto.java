@@ -4,7 +4,7 @@ import org.prd.resourceserver.util.RoleEnum;
 
 import java.util.Date;
 
-public record UserDto(
+public record UserPageDto(
     String username,
     boolean account_locked,
     boolean enabled,

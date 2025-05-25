@@ -5,6 +5,7 @@ import lombok.*;
 import org.prd.resourceserver.util.DayWeekEnum;
 import org.prd.resourceserver.util.TurnEnum;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,5 +37,5 @@ public class DoctorSchedule {
     private Doctor doctor;
 
     @OneToMany(mappedBy = "schedule",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ScheduleException> scheduleExceptionList;
+    private List<ScheduleException> scheduleExceptionList = new ArrayList<>();
 }

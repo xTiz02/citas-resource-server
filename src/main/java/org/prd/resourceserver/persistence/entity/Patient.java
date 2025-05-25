@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.prd.resourceserver.util.GenderEnum;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,13 +31,15 @@ public class Patient {
     private String phone;
     private String address;
     private boolean enabled;
+    private Date creationDate;
+    private Date updateDate;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "patient",fetch = FetchType.LAZY)
-    private List<Appointment> appointments;
+    private List<Appointment> appointments = new ArrayList<>();
 
 
 

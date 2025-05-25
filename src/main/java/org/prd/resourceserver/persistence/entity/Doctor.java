@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.prd.resourceserver.util.GenderEnum;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,9 +34,11 @@ public class Doctor {
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String phone;
-    private String specialty;
     private String licenseNumber;
     private boolean enabled;
+    private Date creationDate;
+    private Date birthDate;
+    private Date updateDate;
     //Lista de especialidades
     @ManyToMany
     @JoinTable(

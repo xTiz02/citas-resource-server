@@ -38,6 +38,12 @@ public class HttpSecurityConfig {
                     authReqConfig.requestMatchers("/client/find/**").permitAll();
                     authReqConfig.requestMatchers("/user/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                    authReqConfig.requestMatchers("/patient/all").hasAnyAuthority(
+                            RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                    authReqConfig.requestMatchers("/doctor/all").hasAnyAuthority(
+                            RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                    authReqConfig.requestMatchers("/specialty/all").hasAnyAuthority(
+                            RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
                     authReqConfig.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2ResourceServerConfig -> {
