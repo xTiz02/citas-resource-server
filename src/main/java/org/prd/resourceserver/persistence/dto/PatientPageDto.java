@@ -1,5 +1,6 @@
 package org.prd.resourceserver.persistence.dto;
 
+import java.time.LocalDate;
 import org.prd.resourceserver.util.GenderEnum;
 
 import java.util.Date;
@@ -10,7 +11,7 @@ public record PatientPageDto(
     String name,
     String lastName,
     int age,
-    Date birthDate,
+    LocalDate birthDate,
     GenderEnum gender,
     Date lastVisitDate,
     String address,

@@ -1,13 +1,13 @@
 package org.prd.resourceserver.persistence.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.prd.resourceserver.util.GenderEnum;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -36,8 +36,11 @@ public class Doctor {
     private String phone;
     private String licenseNumber;
     private boolean enabled;
+
+    @CreationTimestamp
     private Date creationDate;
-    private Date birthDate;
+    private LocalDate birthDate;
+    @UpdateTimestamp
     private Date updateDate;
     //Lista de especialidades
     @ManyToMany
@@ -47,5 +50,12 @@ public class Doctor {
             inverseJoinColumns = @JoinColumn(name = "specialty_id")
     )
     private Set<Specialty> specialties = new HashSet<>();
+
+    @OneToMany(mappedBy = "doctor",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DoctorSchedule> doctorScheduleList = new ArrayList<>();
+
+    public Doctor(Long id) {
+        this.id = id;
+    }
 
 }

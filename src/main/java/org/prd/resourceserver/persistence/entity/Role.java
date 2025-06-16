@@ -30,6 +30,10 @@ public class Role implements GrantedAuthority {
         return name.name();
     }
 
+    public Role(Long id) {
+        this.id = id;
+    }
+
 
 //    public void addUserRole(UserRoleEntity user_role) {
 //        user_roles.add(user_role);

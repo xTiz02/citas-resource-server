@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +22,6 @@ public class GlobalExceptionHandler {
                                                         WebRequest webRequest) {
         log.error(String.format("Error no esperado %s: %s", webRequest.getDescription(false), e.getMessage()));
         e.printStackTrace();
-        return new ResponseEntity<>(new ApiResponse("Error inesperado: " + e.getMessage(), LocalDateTime.now().toString(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResponse("Error inesperado: " + e.getMessage(), new Date(), false), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -17,8 +17,14 @@ public class ClientAppController {
     }
 
     @GetMapping("/find/{clientId}")
-    public ResponseEntity<ClientApp> getClientById(@PathVariable String clientId) {
+    public ResponseEntity<ClientApp> getClientByClientId(@PathVariable String clientId) {
         return ResponseEntity.ok(clientRepository.findByClientId(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found")));
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<ClientApp> getClientById(@PathVariable Long id) {
+        return ResponseEntity.ok(clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Client not found")));
     }
 }

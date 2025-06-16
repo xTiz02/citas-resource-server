@@ -27,6 +27,7 @@ public class DoctorServiceImpl implements DoctorService {
                 page.getContent().stream().map(DoctorMapper::toPageDto).toList(),
                 page.getNumber(),
                 page.getSize(),
+                page.getTotalElements(),
                 page.getTotalPages(),
                 page.isLast(),
                 page.isFirst()

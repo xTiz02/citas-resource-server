@@ -8,8 +8,8 @@ public class SpecialtyMapper {
         return  new SpecialtyPageDto(
                 specialty.getId(),
                 specialty.getName(),
-                specialty.getCreationDate(),
-                specialty.getUpdateDate(),
+                specialty.getCreatedAt(),
+                specialty.getUpdatedAt(),
                 specialty.isEnabled()
         );
     }

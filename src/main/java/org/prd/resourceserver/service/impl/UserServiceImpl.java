@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
                 page.getContent(),
                 page.getNumber(),
                 page.getSize(),
+                page.getTotalElements(),
                 page.getTotalPages(),
                 page.isLast(),
                 page.isFirst()
