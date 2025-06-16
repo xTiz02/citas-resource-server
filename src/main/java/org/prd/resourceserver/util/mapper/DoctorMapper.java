@@ -24,4 +24,5 @@ public class DoctorMapper {
                 doctor.getSpecialties().stream().map(SpecialtyMapper::toPageDto).toList()
         );
     }
+
 }

@@ -43,7 +43,7 @@ public class Doctor {
     @UpdateTimestamp
     private Date updateDate;
     //Lista de especialidades
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "doctor_specialty",
             joinColumns = @JoinColumn(name = "doctor_id"),

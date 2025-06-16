@@ -75,4 +75,8 @@ public class User implements UserDetails {
         return !account_locked;
     }
 
+    public User(Long id){
+        this.id = id;
+    }
+
 }
