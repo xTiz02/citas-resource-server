@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface LocationService {
     List<LocationPageDto> findAllLocationsBySpecialty(Long specialtyId, boolean enabled);
+    List<LocationPageDto> findAllLocations();
     LocationPageDto findLocationById(Long id);
     LocationPageDto createLocation(CreateLocationDto createLocationDto);
     LocationPageDto updateLocation(CreateLocationDto createLocationDto);

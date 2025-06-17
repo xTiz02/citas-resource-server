@@ -10,7 +10,7 @@ public interface UserService {
     PageResponse<UserPageDto> getAllUsers(Pageable pageable);
     UserDetailsDto getUserByUsername(String username);
     UserPageDto createUser(CreateUserDto createUserDto);
-    UserPageDto updateUser(UserDetailsDto userDetailsDto);
+    UserPageDto updateUser(CreateUserDto userDetailsDto);
     UserPageDto getUserById(Long id);
     void deleteUserById(Long id);
     void lockUserAccount(String username);

@@ -15,10 +15,10 @@ public interface ScheduleRepository extends JpaRepository<DoctorSchedule, Long> 
 
   @Query("""
           SELECT ds FROM doctor_schedule ds
-          WHERE :fechaActual BETWEEN ds.startDate AND ds.endDate
+          WHERE :fecha BETWEEN ds.startDate AND ds.endDate
           AND ds.enabled = true
       """)
-  List<DoctorSchedule> findSchedulesActiveNow(@Param("fechaActual") LocalDate fechaActual);
+  List<DoctorSchedule> findSchedulesActiveNow(@Param("fechaActual") LocalDate fecha);
 
 
 }

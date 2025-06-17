@@ -2,7 +2,9 @@ package org.prd.resourceserver.service.impl;
 
 import org.prd.resourceserver.persistence.dto.CreateLocationDto;
 import org.prd.resourceserver.persistence.dto.LocationPageDto;
+import org.prd.resourceserver.persistence.entity.Location;
 import org.prd.resourceserver.persistence.entity.Specialty;
+import org.prd.resourceserver.persistence.repository.LocationRepository;
 import org.prd.resourceserver.persistence.repository.SpecialtyRepository;
 import org.prd.resourceserver.service.LocationService;
 import org.prd.resourceserver.util.mapper.LocationMapper;
@@ -14,9 +16,12 @@ import java.util.List;
 public class LocationServiceImpl implements LocationService {
 
     private final SpecialtyRepository specialtyRepository;
+    private final LocationRepository locationRepository;
 
-    public LocationServiceImpl(SpecialtyRepository specialtyRepository) {
+    public LocationServiceImpl(SpecialtyRepository specialtyRepository,
+        LocationRepository locationRepository) {
         this.specialtyRepository = specialtyRepository;
+      this.locationRepository = locationRepository;
     }
 
     @Override
@@ -25,6 +30,14 @@ public class LocationServiceImpl implements LocationService {
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found with id: " + specialtyId));
         return specialty.getLocations().stream()
                 .filter(location -> location.isEnabled() == enabled)
+                .map(LocationMapper::toPageDto)
+                .toList();
+    }
+
+    @Override
+    public List<LocationPageDto> findAllLocations() {
+        return locationRepository.findAll().stream()
+            .filter(Location::isEnabled)
                 .map(LocationMapper::toPageDto)
                 .toList();
     }

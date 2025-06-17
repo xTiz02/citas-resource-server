@@ -24,4 +24,9 @@ public class LocationController {
     public ResponseEntity<List<LocationPageDto>> getAllLocationsBySpecialty(@PathVariable Long specialtyId, boolean enabled) {
         return ResponseEntity.ok(locationService.findAllLocationsBySpecialty(specialtyId, enabled));
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<LocationPageDto>> getAllLocations() {
+        return ResponseEntity.ok(locationService.findAllLocations());
+    }
 }

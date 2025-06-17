@@ -10,6 +10,9 @@ public class SpecialtyMapper {
                 specialty.getName(),
                 specialty.getCreatedAt(),
                 specialty.getUpdatedAt(),
+                specialty.getLocations().stream()
+                        .map(LocationMapper::toPageDto)
+                        .toList(),
                 specialty.isEnabled()
         );
     }

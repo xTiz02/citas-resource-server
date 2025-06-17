@@ -17,6 +17,7 @@ import org.prd.resourceserver.persistence.entity.ScheduleException;
 import org.prd.resourceserver.persistence.repository.DoctorRepository;
 import org.prd.resourceserver.persistence.repository.ExceptionRepository;
 import org.prd.resourceserver.persistence.repository.RescheduleRepository;
+import org.prd.resourceserver.persistence.repository.ScheduleRepository;
 import org.prd.resourceserver.service.ExceptionService;
 import org.prd.resourceserver.util.AppointmentStatus;
 import org.prd.resourceserver.util.TurnEnum;
@@ -31,12 +32,14 @@ public class ExceptionServiceImpl implements ExceptionService {
 
   private final DoctorRepository doctorRepository;
   private final ExceptionRepository exceptionRepository;
+  private final ScheduleRepository doctorScheduleRepository;
   private final RescheduleRepository rescheduleRepository;
 
   public ExceptionServiceImpl(DoctorRepository doctorRepository,
-      ExceptionRepository exceptionRepository, RescheduleRepository rescheduleRepository) {
+      ExceptionRepository exceptionRepository, ScheduleRepository doctorScheduleRepository, RescheduleRepository rescheduleRepository) {
     this.doctorRepository = doctorRepository;
     this.exceptionRepository = exceptionRepository;
+    this.doctorScheduleRepository = doctorScheduleRepository;
     this.rescheduleRepository = rescheduleRepository;
   }
 
@@ -80,16 +83,25 @@ public class ExceptionServiceImpl implements ExceptionService {
       throw new IllegalArgumentException("Exception date cannot be in the past");
     }
 
-    Doctor doctor = doctorRepository.findById(doctorId)
-        .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctorId));
+    List<DoctorSchedule> doctorSchedulesConfilts;
+    //si es para un doctor
+    if(doctorId != null){
+      Doctor doctor = doctorRepository.findById(doctorId)
+          .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctorId));
 
-    List<DoctorSchedule> doctorSchedulesConfilts = doctor.getDoctorScheduleList().stream()
-        .filter(DoctorSchedule::isEnabled)
-        .filter(schedule -> schedule.getStartDate().isBefore(createScheduleDto.dateException())
-            && schedule.getEndDate().isAfter(createScheduleDto.dateException()))
-        .filter(schedule -> schedule.getTurn() == createScheduleDto.turn()
-            || createScheduleDto.turn() == TurnEnum.ALL_DAY)
-        .toList();
+      doctorSchedulesConfilts = doctor.getDoctorScheduleList().stream()
+          .filter(DoctorSchedule::isEnabled)
+          .filter(schedule -> schedule.getStartDate().isBefore(createScheduleDto.dateException())
+              && schedule.getEndDate().isAfter(createScheduleDto.dateException()))
+          .filter(schedule -> schedule.getTurn() == createScheduleDto.turn()
+              || createScheduleDto.turn() == TurnEnum.ALL_DAY)
+          .toList();
+    }else{
+      //si es global, afecta todos los doctores
+      doctorSchedulesConfilts = doctorScheduleRepository.findSchedulesActiveNow(createScheduleDto.dateException())
+          .stream().filter(schedule -> schedule.getTurn() == createScheduleDto.turn()
+          || createScheduleDto.turn() == TurnEnum.ALL_DAY).toList();
+    }
 
     List<Appointment> rescheduleAppointments = new ArrayList<>();
 

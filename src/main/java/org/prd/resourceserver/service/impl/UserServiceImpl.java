@@ -5,10 +5,14 @@ import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.UserDetailsDto;
 import org.prd.resourceserver.persistence.dto.UserPageDto;
 import org.prd.resourceserver.persistence.entity.User;
+import org.prd.resourceserver.persistence.repository.RoleRepository;
 import org.prd.resourceserver.persistence.repository.UserRepository;
 import org.prd.resourceserver.service.UserService;
 import org.prd.resourceserver.util.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,9 +21,14 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    private PasswordEncoder bCryptPasswordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+      this.roleRepository = roleRepository;
     }
 
     @Override
@@ -48,11 +57,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserPageDto createUser(CreateUserDto createUserDto) {
-        return null;
+        User user = new User();
+        user.setUsername(createUserDto.username());
+        user.setRole(roleRepository.findByName(createUserDto.role()));
+        user.setPassword(bCryptPasswordEncoder.encode(createUserDto.password()));
+        return UserMapper.toPageDto(userRepository.save(user));
     }
 
     @Override
-    public UserPageDto updateUser(UserDetailsDto userDetailsDto) {
+    public UserPageDto updateUser(CreateUserDto userDetailsDto) {
+        Optional<User> userOptional = userRepository.findById(userDetailsDto.id());
         return null;
     }
 
