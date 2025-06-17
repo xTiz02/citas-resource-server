@@ -11,8 +11,6 @@ public record ScheduleExceptionPageDto(
         Long id,
         LocalDate dateException,
         TurnEnum turn,
-        boolean isNonWorkingDay,
-        boolean isReplaced,
         DoctorPageDto doctor,
         List<SchedulePageLiteDto> schedule,
         Date createdAt,

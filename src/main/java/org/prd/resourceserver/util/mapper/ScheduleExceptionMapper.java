@@ -10,10 +10,8 @@ public class ScheduleExceptionMapper {
                 scheduleException.getId(),
                 scheduleException.getDateException(),
                 scheduleException.getTurn(),
-                scheduleException.isNonWorkingDay(),
-                scheduleException.isReplaced(),
                 DoctorMapper.toPageDto(scheduleException.getDoctor()),
-                scheduleException.getSchedules().stream().map(ScheduleMapper::toPageLiteDto).toList(),
+                scheduleException.getSchedulesAfected().stream().map(ScheduleMapper::toPageLiteDto).toList(),
                 scheduleException.getCreatedAt(),
                 scheduleException.getUpdatedAt()
         );
