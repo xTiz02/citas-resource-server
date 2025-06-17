@@ -1,5 +1,6 @@
 package org.prd.resourceserver.service.impl;
 
+import org.prd.resourceserver.persistence.dto.CreateSpecialtyDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.SpecialtyPageDto;
 import org.prd.resourceserver.persistence.entity.Doctor;
@@ -44,5 +45,25 @@ public class SpecialtyServiceImpl implements SpecialtyService {
                 .filter(specialty -> specialty.isEnabled() == enabled)
                 .map(SpecialtyMapper::toPageDto)
                 .toList();
+    }
+
+    @Override
+    public SpecialtyPageDto getSpecialtyById(Long id) {
+        return null;
+    }
+
+    @Override
+    public SpecialtyPageDto createSpecialty(CreateSpecialtyDto createSpecialtyDto) {
+        return null;
+    }
+
+    @Override
+    public SpecialtyPageDto updateSpecialty(CreateSpecialtyDto updateSpecialtyDto) {
+        return null;
+    }
+
+    @Override
+    public void deleteSpecialtyById(Long id) {
+
     }
 }

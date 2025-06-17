@@ -1,5 +1,6 @@
 package org.prd.resourceserver.service.impl;
 
+import org.prd.resourceserver.persistence.dto.CreateLocationDto;
 import org.prd.resourceserver.persistence.dto.LocationPageDto;
 import org.prd.resourceserver.persistence.entity.Specialty;
 import org.prd.resourceserver.persistence.repository.SpecialtyRepository;
@@ -26,5 +27,25 @@ public class LocationServiceImpl implements LocationService {
                 .filter(location -> location.isEnabled() == enabled)
                 .map(LocationMapper::toPageDto)
                 .toList();
+    }
+
+    @Override
+    public LocationPageDto findLocationById(Long id) {
+        return null;
+    }
+
+    @Override
+    public LocationPageDto createLocation(CreateLocationDto createLocationDto) {
+        return null;
+    }
+
+    @Override
+    public LocationPageDto updateLocation(CreateLocationDto createLocationDto) {
+        return null;
+    }
+
+    @Override
+    public void deleteLocation(Long id) {
+
     }
 }

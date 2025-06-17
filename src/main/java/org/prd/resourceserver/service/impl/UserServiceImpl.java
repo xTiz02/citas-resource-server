@@ -1,5 +1,6 @@
 package org.prd.resourceserver.service.impl;
 
+import org.prd.resourceserver.persistence.dto.CreateUserDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.UserDetailsDto;
 import org.prd.resourceserver.persistence.dto.UserPageDto;
@@ -43,6 +44,36 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    @Override
+    public UserPageDto createUser(CreateUserDto createUserDto) {
+        return null;
+    }
+
+    @Override
+    public UserPageDto updateUser(UserDetailsDto userDetailsDto) {
+        return null;
+    }
+
+    @Override
+    public UserPageDto getUserById(Long id) {
+        return null;
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+
+    }
+
+    @Override
+    public void lockUserAccount(String username) {
+
+    }
+
+    @Override
+    public void unlockUserAccount(String username) {
+
     }
 
 }

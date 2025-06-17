@@ -2,6 +2,7 @@ package org.prd.resourceserver.service.impl;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import org.prd.resourceserver.persistence.dto.CreatePatientDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.PatientPageDto;
 import org.prd.resourceserver.persistence.entity.Appointment;
@@ -48,5 +49,25 @@ public class PatientServiceImpl implements PatientService {
         page.isLast(),
         page.isFirst()
     );
+  }
+
+  @Override
+  public PatientPageDto getPatientById(Long id) {
+    return null;
+  }
+
+  @Override
+  public PatientPageDto createPatient(CreatePatientDto createPatientDto) {
+    return null;
+  }
+
+  @Override
+  public PatientPageDto updatePatient(CreatePatientDto upCreatePatientDto) {
+    return null;
+  }
+
+  @Override
+  public void deletePatientById(Long id) {
+
   }
 }
