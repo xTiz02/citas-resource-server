@@ -194,7 +194,8 @@ public class ScheduleServiceImpl implements ScheduleService {
   }
 
   //solo cuando se reduce el horario del medico.
-  public List<AppointmentPageDto> validateAppointmentConflicts(Long existingScheduleId, CreateScheduleDto createScheduleDto) {
+  @Override
+  public List<AppointmentPageDto> validateAppointmentConflictsInUpdate(Long existingScheduleId, CreateScheduleDto createScheduleDto) {
 
     DoctorSchedule existingSchedule = scheduleRepository.findById(existingScheduleId)
         .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + existingScheduleId));
@@ -240,9 +241,78 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
   }
 
+  //Verificar al actualizar  y eliminar(desactivar)
   @Override
-  public void deleteSchedule(int scheduleId) {
+  public List<AppointmentPageDto> validateIfExistAppointmentNowInSchedule(Long scheduleId){
+    DoctorSchedule schedule = scheduleRepository.findById(scheduleId)
+        .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + scheduleId));
 
+    if(schedule.getStartDate().isBefore(LocalDate.now()) &&
+        schedule.getEndDate().isAfter(LocalDate.now())) {
+
+      List<Appointment> conflictsAppointments =  schedule.getAppointments().stream()
+          .filter(Appointment::isEnabled)
+          .filter(app -> !app.isCancelled() && (app.getStatus() == AppointmentStatus.SHEDULED ||
+              app.getStatus() == AppointmentStatus.RESHEDULED))
+          .filter(app -> {
+            if(app.getStatus() == AppointmentStatus.RESHEDULED || app.isRescheduled()) {
+
+              Optional<RescheduledAppointment> lastRescheduled = app.getRescheduledAppointments()
+                  .stream()
+                  .max(Comparator.comparing(RescheduledAppointment::getOrderNumber));
+
+              return lastRescheduled.isPresent() && lastRescheduled.get().getNewDate()
+                  .isEqual(LocalDate.now());
+            } else {
+              return app.getDate().isEqual(LocalDate.now());
+            }
+          })
+          .toList();
+      if (!conflictsAppointments.isEmpty()) {
+        return  conflictsAppointments.stream()
+            .map(AppoimentMapper::toPageDto)
+            .collect(Collectors.toList());
+      }
+    }
+
+    return List.of();
+  }
+
+  @Override
+  public void deleteSchedule(Long scheduleId) {
+    DoctorSchedule schedule = scheduleRepository.findById(scheduleId)
+        .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + scheduleId));
+    schedule.setEnabled(false);
+    scheduleRepository.save(schedule);
+    //las citas no se reprograman ni se cancelan.
+  }
+
+  @Override
+  public void rescheduledAppointmentsOfSchedule(Long scheduleId) {
+    DoctorSchedule schedule = scheduleRepository.findById(scheduleId)
+        .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + scheduleId));
+    List<Appointment> rescheduleAppointments =  schedule.getAppointments().stream()
+        .filter(Appointment::isEnabled)
+        .filter(app -> !app.isCancelled() && (app.getStatus() == AppointmentStatus.SHEDULED ||
+            app.getStatus() == AppointmentStatus.RESHEDULED))
+        .filter(app -> {
+          if(app.getStatus() == AppointmentStatus.RESHEDULED || app.isRescheduled()) {
+
+            Optional<RescheduledAppointment> lastRescheduled = app.getRescheduledAppointments()
+                .stream()
+                .max(Comparator.comparing(RescheduledAppointment::getOrderNumber));
+
+            return lastRescheduled.isPresent() && lastRescheduled.get().getNewDate()
+                .isAfter(LocalDate.now());
+          } else {
+            return app.getDate().isAfter(LocalDate.now());
+          }
+        })
+        .toList();
+
+    if (!rescheduleAppointments.isEmpty()) {
+      //reprogramar
+    }
   }
 
 

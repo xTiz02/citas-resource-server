@@ -2,14 +2,12 @@ package org.prd.resourceserver.service.impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.prd.resourceserver.persistence.dto.AppointmentPageDto;
 import org.prd.resourceserver.persistence.dto.CreateExceptionDto;
-import org.prd.resourceserver.persistence.dto.CreateScheduleDto;
+import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.ScheduleExceptionPageDto;
 import org.prd.resourceserver.persistence.entity.Appointment;
 import org.prd.resourceserver.persistence.entity.Doctor;
@@ -24,6 +22,8 @@ import org.prd.resourceserver.util.AppointmentStatus;
 import org.prd.resourceserver.util.TurnEnum;
 import org.prd.resourceserver.util.mapper.AppoimentMapper;
 import org.prd.resourceserver.util.mapper.ScheduleExceptionMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,18 +42,23 @@ public class ExceptionServiceImpl implements ExceptionService {
 
   @Override
   public List<ScheduleExceptionPageDto> validateExceptionConflits(Long doctorId,
-      CreateExceptionDto createScheduleDto) {
+      CreateExceptionDto createExceptionDto) {
 
-    if (createScheduleDto.dateException().isBefore(LocalDate.now())) {
+    if (createExceptionDto.dateException().isBefore(LocalDate.now())) {
       throw new IllegalArgumentException("Exception date cannot be in the past");
     }
+
+    if( createExceptionDto.dateException().isEqual(LocalDate.now())) {
+      throw new IllegalArgumentException("Exception date cannot be today");
+    }
+
     List<ScheduleException> confilts = new ArrayList<>();
     List<ScheduleException> existingExceptions = exceptionRepository.findAllByDoctor_Id(doctorId);
     existingExceptions.stream()
-        .filter(exception -> !exception.getId().equals(createScheduleDto.exceptionId())).forEach(
+        .filter(exception -> !exception.getId().equals(createExceptionDto.exceptionId())).forEach(
             exception -> {
-              if (exception.getDateException().isEqual(createScheduleDto.dateException())
-                  && exception.getTurn() == createScheduleDto.turn()) {
+              if (exception.getDateException().isEqual(createExceptionDto.dateException())
+                  && exception.getTurn() == createExceptionDto.turn()) {
                 confilts.add(exception);
               }
             }
@@ -86,7 +91,7 @@ public class ExceptionServiceImpl implements ExceptionService {
             || createScheduleDto.turn() == TurnEnum.ALL_DAY)
         .toList();
 
-    List<Appointment> reprogramingAppoiments = new ArrayList<>();
+    List<Appointment> rescheduleAppointments = new ArrayList<>();
 
     if (!doctorSchedulesConfilts.isEmpty()) {
       doctorSchedulesConfilts.forEach(
@@ -98,20 +103,6 @@ public class ExceptionServiceImpl implements ExceptionService {
                 .filter(appointment -> !appointment.isCancelled())
                 .filter(appointment -> appointment.getStatus().equals(AppointmentStatus.SHEDULED))
                 .forEach(appointment -> {
-//                  if (appointment.isRescheduled()) {
-//                    Optional<RescheduledAppointment> lastRescheduled = appointment.getRescheduledAppointments()
-//                        .stream()
-//                        .max(Comparator.comparing(RescheduledAppointment::getOrderNumber));
-//                    if (lastRescheduled.isPresent() &&
-//                        createScheduleDto.dateException()
-//                            .isEqual(lastRescheduled.get().getNewDate())
-//                        && (createScheduleDto.turn() == TurnEnum.ALL_DAY ||
-//                        lastRescheduled.get().getSchedule().getTurn() == createScheduleDto.turn())) {
-//                      appointmentsConflicts.add(appointment);
-//                    }
-//                  } else {
-//                    appointmentsConflicts.add(appointment);
-//                  }
                   appointmentsConflicts.add(appointment);
                 });
             List<RescheduledAppointment> rescheduledAppointments =
@@ -128,14 +119,14 @@ public class ExceptionServiceImpl implements ExceptionService {
                   }
                 });
             if (!appointmentsConflicts.isEmpty()) {
-              reprogramingAppoiments.addAll(appointmentsConflicts);
+              rescheduleAppointments.addAll(appointmentsConflicts);
             }
           }
       );
     }
 
-    if (!reprogramingAppoiments.isEmpty()) {
-      return reprogramingAppoiments.stream()
+    if (!rescheduleAppointments.isEmpty()) {
+      return rescheduleAppointments.stream()
           .map(AppoimentMapper::toPageDto)
           .collect(Collectors.toList());
     } else {
@@ -198,5 +189,23 @@ public class ExceptionServiceImpl implements ExceptionService {
     exception.setDoctor(new Doctor(doctor.getId()));
 
     return ScheduleExceptionMapper.toPageDto(exceptionRepository.save(exception));
+  }
+
+  @Override
+  public PageResponse<ScheduleExceptionPageDto> findAllByDoctorId(Long doctorId, Pageable pageable) {
+    Doctor doctor = doctorRepository.findById(doctorId)
+        .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + doctorId));
+
+    Page<ScheduleException> exceptions = exceptionRepository.findAllByDoctor_Id(doctorId, pageable);
+
+    return new PageResponse<>(
+        exceptions.stream().map(ScheduleExceptionMapper::toPageDto).toList(),
+        pageable.getPageNumber(),
+        pageable.getPageSize(),
+        exceptions.getTotalElements(),
+        exceptions.getTotalPages(),
+        exceptions.isLast(),
+        exceptions.isFirst()
+    );
   }
 }

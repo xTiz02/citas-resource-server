@@ -87,6 +87,7 @@ public class ReplacementServiceImpl implements ReplacementService
     replacementRepository.deleteById(replacementId);
   }
 
+
   public void validateReplacement(DoctorSchedule schedule,CreateReplacementDto replacementDto) {
 
     if(replacementDto.dateFrom().isAfter(replacementDto.dateTo())){
