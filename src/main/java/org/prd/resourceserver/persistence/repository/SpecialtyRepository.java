@@ -14,7 +14,7 @@ import java.util.List;
 public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
 
     @Query("select new org.prd.resourceserver.persistence.dto.SpecialtyPageDto(" +
-            "s.id, s.name, s.createdAt, s.updatedAt, s.enabled) " +
+            "s.id, s.name, s.createdAt, s.updatedAt,null, s.enabled) " +
             "from specialty s")
     Page<SpecialtyPageDto> findAllSpecialties(Pageable pageable);
 

@@ -44,12 +44,24 @@ public class HttpSecurityConfig {
                     authReqConfig.requestMatchers("/authorization/**").permitAll();
                     authReqConfig.requestMatchers("/user/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                    authReqConfig.requestMatchers("/user/**").hasAnyAuthority(
+                        RoleEnum.ROLE_ADMIN.name());
+                    authReqConfig.requestMatchers("/location/all").hasAnyAuthority(
+                            RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                  authReqConfig.requestMatchers("/location/**").hasAnyAuthority(
+                      RoleEnum.ROLE_ADMIN.name());
                     authReqConfig.requestMatchers("/patient/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                  authReqConfig.requestMatchers("/patient/**").hasAnyAuthority(
+                      RoleEnum.ROLE_ADMIN.name());
                     authReqConfig.requestMatchers("/doctor/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                  authReqConfig.requestMatchers("/doctor/**").hasAnyAuthority(
+                      RoleEnum.ROLE_ADMIN.name());
                     authReqConfig.requestMatchers("/specialty/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
+                  authReqConfig.requestMatchers("/specialty/**").hasAnyAuthority(
+                      RoleEnum.ROLE_ADMIN.name());
                     authReqConfig.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2ResourceServerConfig -> {

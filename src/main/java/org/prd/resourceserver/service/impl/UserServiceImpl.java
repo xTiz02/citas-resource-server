@@ -66,18 +66,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserPageDto updateUser(CreateUserDto userDetailsDto) {
-        Optional<User> userOptional = userRepository.findById(userDetailsDto.id());
-        return null;
+        User userOptional = userRepository.findById(userDetailsDto.id())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if(userDetailsDto.password() != null){
+            userOptional.setPassword(bCryptPasswordEncoder.encode(userDetailsDto.password()));
+        }
+        userOptional.setUsername(userDetailsDto.username());
+        userOptional.setRole(roleRepository.findByName(userDetailsDto.role()));
+        userOptional = userRepository.save(userOptional);
+        return UserMapper.toPageDto(userOptional);
     }
 
     @Override
     public UserPageDto getUserById(Long id) {
-        return null;
+        User userOptional = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return UserMapper.toPageDto(userOptional);
     }
 
     @Override
     public void deleteUserById(Long id) {
-
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEnabled(false);
+        userRepository.save(user);
     }
 
     @Override

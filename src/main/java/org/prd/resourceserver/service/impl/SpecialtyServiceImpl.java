@@ -1,10 +1,15 @@
 package org.prd.resourceserver.service.impl;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.prd.resourceserver.persistence.dto.CreateSpecialtyDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.SpecialtyPageDto;
 import org.prd.resourceserver.persistence.entity.Doctor;
+import org.prd.resourceserver.persistence.entity.Location;
+import org.prd.resourceserver.persistence.entity.Specialty;
 import org.prd.resourceserver.persistence.repository.DoctorRepository;
+import org.prd.resourceserver.persistence.repository.LocationRepository;
 import org.prd.resourceserver.persistence.repository.SpecialtyRepository;
 import org.prd.resourceserver.service.SpecialtyService;
 import org.prd.resourceserver.util.mapper.SpecialtyMapper;
@@ -18,10 +23,13 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     private final SpecialtyRepository specialtyRepository;
     private final DoctorRepository doctorRepository;
+    private final LocationRepository locationRepository;
 
-    public SpecialtyServiceImpl(SpecialtyRepository specialtyRepository, DoctorRepository doctorRepository) {
+    public SpecialtyServiceImpl(SpecialtyRepository specialtyRepository, DoctorRepository doctorRepository,
+        LocationRepository locationRepository) {
         this.specialtyRepository = specialtyRepository;
         this.doctorRepository = doctorRepository;
+      this.locationRepository = locationRepository;
     }
     @Override
     public PageResponse<SpecialtyPageDto> getAllSpecialties(Pageable pageable) {
@@ -49,21 +57,51 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     @Override
     public SpecialtyPageDto getSpecialtyById(Long id) {
-        return null;
+        return specialtyRepository.findById(id)
+                .map(SpecialtyMapper::toPageDto)
+                .orElseThrow(() -> new RuntimeException("Specialty not found with id: " + id));
     }
 
     @Override
     public SpecialtyPageDto createSpecialty(CreateSpecialtyDto createSpecialtyDto) {
-        return null;
+        Specialty specialty = new Specialty();
+        specialty.setName(createSpecialtyDto.name());
+        specialty.setEnabled(true); // Default to enabled
+        Set<Location> locations = new HashSet<>();
+        for(long i : createSpecialtyDto.locationIds()){
+            Location location = locationRepository.findById(i)
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found with id: " + i));
+            locations.add(location);
+        }
+
+        specialty.setLocations(locations);
+
+
+        return SpecialtyMapper.toPageDto(specialtyRepository.save(specialty));
     }
 
     @Override
     public SpecialtyPageDto updateSpecialty(CreateSpecialtyDto updateSpecialtyDto) {
-        return null;
+        Specialty specialty = specialtyRepository.findById(updateSpecialtyDto.id())
+                .orElseThrow(() -> new RuntimeException("Specialty not found with id: " + updateSpecialtyDto.id()));
+        specialty.setName(updateSpecialtyDto.name());
+        Set<Location> locations = new HashSet<>();
+        for (long i : updateSpecialtyDto.locationIds()) {
+            Location location = locationRepository.findById(i)
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found with id: " + i));
+            locations.add(location);
+        }
+        specialty.getLocations().clear();
+        specialty.setLocations(locations);
+
+        return SpecialtyMapper.toPageDto(specialtyRepository.save(specialty));
     }
 
     @Override
     public void deleteSpecialtyById(Long id) {
-
+        Specialty specialty = specialtyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Specialty not found with id: " + id));
+        specialty.setEnabled(false);
+        specialtyRepository.save(specialty);
     }
 }

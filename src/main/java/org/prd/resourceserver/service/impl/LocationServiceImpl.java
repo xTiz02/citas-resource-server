@@ -44,21 +44,34 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationPageDto findLocationById(Long id) {
-        return null;
+        return locationRepository.findById(id)
+                .map(LocationMapper::toPageDto)
+                .orElseThrow(() -> new IllegalArgumentException("Location not found with id: " + id));
     }
 
     @Override
     public LocationPageDto createLocation(CreateLocationDto createLocationDto) {
-        return null;
+        Location location = new Location();
+        location.setName(createLocationDto.name());
+        location.setAddress(createLocationDto.address());
+        location.setEnabled(true);
+        return LocationMapper.toPageDto(locationRepository.save(location));
     }
 
     @Override
     public LocationPageDto updateLocation(CreateLocationDto createLocationDto) {
-        return null;
+        Location location = locationRepository.findById(createLocationDto.id())
+                .orElseThrow(() -> new IllegalArgumentException("Location not found with id: " + createLocationDto.id()));
+        location.setName(createLocationDto.name());
+        location.setAddress(createLocationDto.address());
+        return LocationMapper.toPageDto(locationRepository.save(location));
     }
 
     @Override
     public void deleteLocation(Long id) {
-
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Location not found with id: " + id));
+        location.setEnabled(false);
+        locationRepository.save(location);
     }
 }

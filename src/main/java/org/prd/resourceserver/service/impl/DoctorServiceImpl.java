@@ -1,6 +1,7 @@
 package org.prd.resourceserver.service.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +81,25 @@ public class DoctorServiceImpl implements DoctorService {
 
   @Override
   public DoctorPageDto updateDoctor(CreateDoctorDto updateDoctorDto) {
-    return null;
+    Doctor doctor = doctorRepository.findById(updateDoctorDto.id())
+        .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + updateDoctorDto.id()));
+    doctor.setDni(updateDoctorDto.dni());
+    doctor.setFirstName(updateDoctorDto.firstName());
+    doctor.setLastName(updateDoctorDto.lastName());
+    doctor.setEmail(updateDoctorDto.email());
+    doctor.setBirthDate(updateDoctorDto.birthDate() != null ? updateDoctorDto.birthDate() : LocalDate.now());
+    doctor.setLicenseNumber(updateDoctorDto.licenseNumber());
+    doctor.setGender(updateDoctorDto.gender());
+    doctor.setPhone(updateDoctorDto.phone());
+    List<Specialty> list  =new ArrayList<>();
+    for(Long i : updateDoctorDto.specialties()){
+      Specialty specialty = specialtyRepository.findById(i)
+          .orElseThrow(() -> new RuntimeException("Specialty not found with id: " + i));
+      list.add(specialty);
+    }
+    doctor.getSpecialties().clear();
+    doctor.setSpecialties(new HashSet<>(list));
+    return DoctorMapper.toPageDto(doctorRepository.save(doctor));
   }
 
   @Override
