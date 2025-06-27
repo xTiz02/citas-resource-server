@@ -1,14 +1,12 @@
 package org.prd.resourceserver.service.impl;
 
-import java.time.LocalDate;
-import java.util.List;
 import org.prd.resourceserver.persistence.dto.CreateReplacementDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.ScheduleReplacementPageDto;
 import org.prd.resourceserver.persistence.entity.Doctor;
 import org.prd.resourceserver.persistence.entity.DoctorSchedule;
 import org.prd.resourceserver.persistence.entity.ScheduleReplacement;
-import org.prd.resourceserver.persistence.repository.PreplacementRepository;
+import org.prd.resourceserver.persistence.repository.ReplacementRepository;
 import org.prd.resourceserver.persistence.repository.ScheduleRepository;
 import org.prd.resourceserver.service.ReplacementService;
 import org.prd.resourceserver.util.UtilConstants;
@@ -20,10 +18,10 @@ import org.springframework.stereotype.Service;
 public class ReplacementServiceImpl implements ReplacementService
 {
 
-  private final PreplacementRepository replacementRepository;
+  private final ReplacementRepository replacementRepository;
   private final ScheduleRepository scheduleRepository;
 
-  public ReplacementServiceImpl(PreplacementRepository replacementRepository,
+  public ReplacementServiceImpl(ReplacementRepository replacementRepository,
       ScheduleRepository scheduleRepository) {
     this.replacementRepository = replacementRepository;
     this.scheduleRepository = scheduleRepository;

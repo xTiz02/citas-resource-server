@@ -1,12 +1,11 @@
 package org.prd.resourceserver.persistence.repository;
 
-import java.util.List;
 import org.prd.resourceserver.persistence.entity.ScheduleReplacement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PreplacementRepository extends JpaRepository<ScheduleReplacement,Long> {
+public interface ReplacementRepository extends JpaRepository<ScheduleReplacement,Long> {
 
   Page<ScheduleReplacement> findPageBySchedule_Id(Pageable pageable,long scheduleId);
 }
