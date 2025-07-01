@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.prd.resourceserver.persistence.dto.CalendarScheduleDto;
+import org.prd.resourceserver.persistence.entity.DoctorSchedule;
 import org.prd.resourceserver.persistence.repository.DoctorRepository;
 import org.prd.resourceserver.persistence.repository.ReplacementRepository;
 import org.prd.resourceserver.persistence.repository.RescheduleRepository;
@@ -31,8 +32,9 @@ public class CalendarServiceImpl {
   }
 
 
-  public List<CalendarScheduleDto> findCalendarSchedulesByMonth(Long doctorId,@NotNull Long specialtyId, LocalDate date,@NotNull int month) {
-
+  public List<CalendarScheduleDto> findCalendarSchedulesByMonth(Long doctorId,@NotNull Long specialtyId, LocalDate date) {
+    List<DoctorSchedule> schedulesOfTheMonth = scheduleRepository.findSchedules(
+        specialtyId, doctorId, date);
 
     return null;
   }

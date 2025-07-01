@@ -1,15 +1,21 @@
 package org.prd.resourceserver.service.impl;
 
+import java.time.LocalDate;
+import java.util.List;
 import org.prd.resourceserver.persistence.dto.CreateReplacementDto;
+import org.prd.resourceserver.persistence.dto.DoctorPageDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.ScheduleReplacementPageDto;
 import org.prd.resourceserver.persistence.entity.Doctor;
 import org.prd.resourceserver.persistence.entity.DoctorSchedule;
 import org.prd.resourceserver.persistence.entity.ScheduleReplacement;
+import org.prd.resourceserver.persistence.repository.DoctorRepository;
 import org.prd.resourceserver.persistence.repository.ReplacementRepository;
 import org.prd.resourceserver.persistence.repository.ScheduleRepository;
 import org.prd.resourceserver.service.ReplacementService;
+import org.prd.resourceserver.util.TurnEnum;
 import org.prd.resourceserver.util.UtilConstants;
+import org.prd.resourceserver.util.mapper.DoctorMapper;
 import org.prd.resourceserver.util.mapper.ScheduleReplacementMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,11 +26,14 @@ public class ReplacementServiceImpl implements ReplacementService
 
   private final ReplacementRepository replacementRepository;
   private final ScheduleRepository scheduleRepository;
+  private final DoctorRepository doctorRepository;
 
   public ReplacementServiceImpl(ReplacementRepository replacementRepository,
-      ScheduleRepository scheduleRepository) {
+      ScheduleRepository scheduleRepository, DoctorRepository doctorRepository,
+      DoctorRepository doctorRepository1) {
     this.replacementRepository = replacementRepository;
     this.scheduleRepository = scheduleRepository;
+    this.doctorRepository = doctorRepository1;
   }
 
   @Override
@@ -107,5 +116,25 @@ public class ReplacementServiceImpl implements ReplacementService
             throw new IllegalArgumentException("Replacement already exists for this schedule in the specified date range.");
           });
     }
+  }
+
+  @Override
+  public List<DoctorPageDto> findAllCoveringDoctors(Long scheduleId, LocalDate dateFrom, LocalDate dateTo) {
+    DoctorSchedule doctorSchedule = scheduleRepository.findById(scheduleId)
+        .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + scheduleId));
+
+    List<Doctor> filteredDoctors = doctorRepository.findAll().stream()
+        .filter(Doctor::isEnabled)
+        .filter(doctor -> doctor.getSpecialties().stream()
+            .anyMatch(specialty -> doctorSchedule.getSpecialty().isEnabled() && specialty.getId().equals(doctorSchedule.getSpecialty().getId())))
+        .filter(doctor -> doctor.getDoctorScheduleList().stream().noneMatch(schedule ->
+            UtilConstants.isDateRangeOverlapping(schedule.getStartDate(), schedule.getEndDate(), dateFrom, dateTo)
+                && (schedule.getTurn().equals(doctorSchedule.getTurn()) || doctorSchedule.getTurn() == TurnEnum.ALL_DAY)
+        ))
+        .toList();
+
+    return filteredDoctors.stream()
+        .map(DoctorMapper::toPageDto)
+        .toList();
   }
 }

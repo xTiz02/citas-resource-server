@@ -12,8 +12,7 @@ public record CreateReplacementDto(
     Long absentDoctorId,
     Long coveringDoctor,
     LocalDate dateFrom,
-    LocalDate dateTo,
-    TurnEnum turn
+    LocalDate dateTo
 ) {
 
 }

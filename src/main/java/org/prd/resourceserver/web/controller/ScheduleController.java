@@ -44,7 +44,7 @@ public class ScheduleController {
   }
 
   @GetMapping("/validate/appointment/{scheduleId}")
-  public ResponseEntity<List<AppointmentPageDto>> validateAlreadyAppointmentConflictsToCancel(
+  public ResponseEntity<List<AppointmentPageDto>> validateAlreadyAppointmentConflicts(
       @PathVariable Long scheduleId) {
     return ResponseEntity.ok(scheduleService.validateIfExistAppointmentNowInSchedule(scheduleId));
   }

@@ -1,7 +1,10 @@
 package org.prd.resourceserver.web.controller;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import org.prd.resourceserver.persistence.dto.CreateReplacementDto;
+import org.prd.resourceserver.persistence.dto.DoctorPageDto;
 import org.prd.resourceserver.persistence.dto.PageResponse;
 import org.prd.resourceserver.persistence.dto.ScheduleReplacementPageDto;
 import org.prd.resourceserver.service.ReplacementService;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -48,5 +52,13 @@ public class ReplacementController {
   public ResponseEntity<Void> deleteReplacement(@PathVariable long replacementId) {
     replacementService.deleteReplacement(replacementId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/covering-doctors/{scheduleId}")
+  public ResponseEntity<List<DoctorPageDto>> findAllCoveringDoctors(
+      @PathVariable long scheduleId,
+      @RequestParam LocalDate dateFrom,
+      @RequestParam LocalDate dateTo) {
+    return ResponseEntity.ok(replacementService.findAllCoveringDoctors(scheduleId, dateFrom, dateTo));
   }
 }
