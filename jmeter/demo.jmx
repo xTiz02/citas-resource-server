@@ -5,6 +5,8 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables definidas por el Usuario">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="getall">
@@ -37,19 +39,11 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">CTOPuxVHlH4_vHy5nP4a75cyACum9jg6u06Bhn2lLc3WwzRUCukmE5_9eZCQNH2J8xZ6vL8Ryv6VMI0to40vQt_xwislT2CX8fHJx4Mkd5cdrH0g</stringProp>
+                <stringProp name="Header.value">Bearer eyJraWQiOiJiOTk4Yjk0OC1mYzM3LTQwMDEtODFmNy03NTVjMzM3MjYyZDciLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImF1ZCI6ImNpdGFzQXBwIiwibmJmIjoxNzUxNDE2MjI1LCJyb2xlIjpbIlJPTEVfQURNSU4iXSwic2NvcGUiOlsib3BlbmlkIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4NSIsImV4cCI6MTc1MzU3NjIyNSwiaWF0IjoxNzUxNDE2MjI1LCJqdGkiOiJmMzYxY2Q1Ni04NWJhLTQzM2UtOTM2Zi0yZjMwNjI2YjIzZGQifQ.i2aJ1layfuaeLCI_6TVrfOj8jGCOXDJteldTnm7fdU0ej55QGsj_GN9KT9w-pnGkfn1uzMV-WfpUNSvqa2mvE5muAtpc47mwHXYCTfkCrRe3HvBscqIWAISl7ifySubyy_tWFHzbKYMtDXW832BEOkEFKZYEmIQbZmMjdqUmZXH467Usdo65USoy0modutwSSsmbMohaBeW1QskMacOhVsPI70eOo6rTWW5CbrJrN0vIlQznx3XXUbiIv7CWmmaataCaKeTLeMRNOAb4LRxFC0azwgipq4FrbPO7eRlC6nwcPwM3WacIEZ0zw8UQMawD_maJ4IQhwkeu97EvNZLjzw_</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Accept</stringProp>
                 <stringProp name="Header.value">*/*</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Accept-Encoding </stringProp>
-                <stringProp name="Header.value">gzip, deflate, br</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Connection</stringProp>
-                <stringProp name="Header.value">keep-alive</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -128,7 +122,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph">
+          <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
