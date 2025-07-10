@@ -1,8 +1,10 @@
 package org.prd.resourceserver.persistence.patient.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -23,11 +25,16 @@ public class UserPatient {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   private Long id;
+  @Column(unique = true)
   private Long userId;
+  private String familyCode;
   private String tipoDocumento;
+  @Column(unique = true)
   private String numeroDocumento;
   private String apellidoPaterno;
   private String apellidoMaterno;
+  @Transient
+  private String password;
   private String nombres;
   private LocalDate fechaNacimiento;
   private String numeroCelular;

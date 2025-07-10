@@ -1,13 +1,18 @@
 package org.prd.resourceserver.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.prd.resourceserver.persistence.patient.dto.DoctorPatinetDto;
+import org.prd.resourceserver.persistence.patient.dto.DoctorPatientDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DoctorExample {
 
-  public static DoctorPatinetDto createSampleDoctor() {
+  private List<DoctorPatientDto> doctors = new ArrayList<>();
+
+  public List<DoctorPatientDto> getDoctors() {
     Map<Integer, List<String>> timeSlots = new HashMap<>();
     timeSlots.put(14, List.of("11:30", "12:00", "12:30", "14:15", "15:00"));
     timeSlots.put(16, List.of("09:00", "10:30", "11:00", "14:15"));
@@ -17,14 +22,21 @@ public class DoctorExample {
     timeSlots.put(25, List.of("08:00", "10:30", "13:30", "15:00"));
     timeSlots.put(28, List.of("09:30", "11:00", "14:15", "16:30"));
 
-    return new DoctorPatinetDto(
+
+    DoctorPatientDto doctor = new DoctorPatientDto(
         1L,
         "DR(A) JULIAN FALCON JOSE RAUL",
         "MEDICINA FÍSICA-REHABILITACIÓN",
+        5,
         true,
         List.of(14, 16, 18, 21, 23, 25, 28),
         timeSlots
     );
+    doctors.add(doctor);
+    return doctors;
   }
 
+  public void addDoctor(DoctorPatientDto doctor) {
+    doctors.add(doctor);
+  }
 }

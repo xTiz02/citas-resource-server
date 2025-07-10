@@ -9,6 +9,7 @@ public enum AppointmentStatus {
     NO_SHOW,
     PAYMENT_PENDING,
     programada,
+    reprogramada,
     cancelada,
     atendida,
     pendiente,
