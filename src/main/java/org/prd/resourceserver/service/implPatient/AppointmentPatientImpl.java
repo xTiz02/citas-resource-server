@@ -4,8 +4,10 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.prd.resourceserver.persistence.patient.dto.ApiResponse;
 import org.prd.resourceserver.persistence.patient.entity.AppointmentPatient;
+import org.prd.resourceserver.persistence.patient.entity.FamilyMemberPatient;
 import org.prd.resourceserver.persistence.patient.entity.UserPatient;
 import org.prd.resourceserver.persistence.patient.repository.AppointmentPatientRepository;
+import org.prd.resourceserver.persistence.patient.repository.FamilyMemberRepository;
 import org.prd.resourceserver.persistence.patient.repository.UserPatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class AppointmentPatientImpl {
   private UserPatientRepository userPatientRepository;
   @Autowired
   private UserPatientImpl userPatientImpl;
+  @Autowired
+  private FamilyMemberRepository familyMemberRepository;
 
 
   public ApiResponse<List<AppointmentPatient>> getHistoryAppointmentsByPatientId(String username) {
@@ -43,6 +47,18 @@ public class AppointmentPatientImpl {
     }
 
     return new ApiResponse<>("Upcoming appointments found", null, appointments, true);
+  }
+
+  public ApiResponse<AppointmentPatient> saveAppointment(AppointmentPatient appointment) {
+    log.info("Saving appointment for patient ID: " + appointment.getPatientId());
+    FamilyMemberPatient patient = familyMemberRepository.findById(appointment.getPatientId()).orElse(null);
+    //con el mes dia y ttime quitar con el doctorId del horario
+    Long doctorId = appointment.getDoctorId();
+    int month = appointment.getDate().getMonthValue();
+    int day = appointment.getDate().getDayOfMonth();
+    String time = appointment.getTime();
+    AppointmentPatient savedAppointment = appointmentPatientRepository.save(appointment);
+    return new ApiResponse<>("Appointment saved successfully", null, savedAppointment, true);
   }
 
 }

@@ -38,7 +38,6 @@ public class UserPatientImpl {
     log.info("Fetching patient by username: " + username);
     User userPatient = userRepository.findByUsername(username).orElse(null);
     UserPatient patient = patientRepository.findByUserId(userPatient.getId());
-
     return new ApiResponse<>(
         patient != null ? "Paciente encontrado" : "Paciente no encontrado",
         null,
@@ -58,9 +57,31 @@ public class UserPatientImpl {
     existingPatient.setApellidoMaterno(userPatient.getApellidoMaterno());
     existingPatient.setNumeroCelular(userPatient.getNumeroCelular());
     existingPatient.setCorreoElectronico(userPatient.getCorreoElectronico());
-    existingPatient.setPeso(userPatient.getPeso());
-    existingPatient.setAltura(userPatient.getAltura());
 
+    if(userPatient.getFechaNacimiento() != null){
+      existingPatient.setFechaNacimiento(userPatient.getFechaNacimiento());
+    }
+    if(userPatient.getTipoDocumento() != null){
+      existingPatient.setTipoDocumento(userPatient.getTipoDocumento());
+    }
+    if(userPatient.getGenero() != null){
+      existingPatient.setGenero(userPatient.getGenero());
+    }
+    if(userPatient.getNumeroDocumento() != null){
+      existingPatient.setNumeroDocumento(userPatient.getNumeroDocumento());
+    }
+    if(userPatient.getAltura() != null){
+      existingPatient.setAltura(userPatient.getAltura());
+    }
+    if(userPatient.getPeso() != null){
+      existingPatient.setPeso(userPatient.getPeso());
+    }
+    if(userPatient.getTelefonoEmergencia() != null){
+      existingPatient.setTelefonoEmergencia(userPatient.getTelefonoEmergencia());
+    }
+    if(userPatient.getContactoEmergencia() != null){
+      existingPatient.setContactoEmergencia(userPatient.getContactoEmergencia());
+    }
     UserPatient updatedPatient = patientRepository.save(existingPatient);
     log.info("Patient updated successfully with ID: " + updatedPatient.getId());
     return new ApiResponse<>(
@@ -75,7 +96,7 @@ public class UserPatientImpl {
   public ApiResponse<UserPatient> savePatient(UserPatient userPatient) {
     log.info(
         "Saving new patient: " + userPatient.getNombres() + " " + userPatient.getApellidoPaterno());
-    String password = userPatient.getPassword();
+    String password = userPatient.getContraseña();
     if (password != null) {
       password = passwordEncoder.encode(password);
     }
@@ -114,6 +135,28 @@ public class UserPatientImpl {
         "Paciente guardado correctamente",
         null,
         savedPatient,
+        true
+    );
+  }
+
+  @Transactional
+  public ApiResponse<UserPatient> changePassword(Long patientId, String newPassword) {
+    log.info("Changing password for user: " + patientId);
+    UserPatient patient = patientRepository.findById(patientId).orElse(null);
+    if (patient == null) {
+      return new ApiResponse<>("Paciente no encontrado", null, null, false);
+    }
+    User user = userRepository.findById(patient.getUserId()).orElse(null);
+    if (user == null) {
+      return new ApiResponse<>("Usuario no encontrado", null, null, false);
+    }
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+    log.info("Password changed successfully for user: " + patientId);
+    return new ApiResponse<>(
+        "Contraseña cambiada correctamente",
+        null,
+        patient,
         true
     );
   }

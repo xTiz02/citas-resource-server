@@ -61,5 +61,19 @@ public class UserPatientController {
     }
   }
 
+  @GetMapping("/change-password/{patientId}/{newPassword}")
+  public ApiResponse<UserPatient> updatePatientPassword(@PathVariable Long patientId, @PathVariable String newPassword) {
+    try {
+      return userPatientImpl.changePassword(patientId, newPassword);
+    } catch (Exception e) {
+      return new ApiResponse<>(
+          "Error al actualizar la contraseña del paciente: " + e.getMessage(),
+          null,
+          null,
+          false
+      );
+    }
+  }
+
 
 }

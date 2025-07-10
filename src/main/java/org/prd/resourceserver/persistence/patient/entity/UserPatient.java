@@ -34,7 +34,7 @@ public class UserPatient {
   private String apellidoPaterno;
   private String apellidoMaterno;
   @Transient
-  private String password;
+  private String contraseña;
   private String nombres;
   private LocalDate fechaNacimiento;
   private String numeroCelular;

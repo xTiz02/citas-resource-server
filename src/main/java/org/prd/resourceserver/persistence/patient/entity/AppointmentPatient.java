@@ -5,6 +5,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class AppointmentPatient {
   private String time; // puede ser LocalTime si lo prefieres
   private AppointmentStatus status;
   private String consultorio;
-  private Double price;
+  private BigDecimal price;
   @CreationTimestamp
   private Date createdAt;
   @UpdateTimestamp
