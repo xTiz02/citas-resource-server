@@ -9,6 +9,7 @@ import org.prd.resourceserver.persistence.patient.entity.UserPatient;
 import org.prd.resourceserver.persistence.patient.repository.AppointmentPatientRepository;
 import org.prd.resourceserver.persistence.patient.repository.FamilyMemberRepository;
 import org.prd.resourceserver.persistence.patient.repository.UserPatientRepository;
+import org.prd.resourceserver.util.DoctorExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class AppointmentPatientImpl {
   private UserPatientImpl userPatientImpl;
   @Autowired
   private FamilyMemberRepository familyMemberRepository;
+  @Autowired
+  private DoctorExample doctorExample;
 
 
   public ApiResponse<List<AppointmentPatient>> getHistoryAppointmentsByPatientId(String username) {
@@ -51,12 +54,24 @@ public class AppointmentPatientImpl {
 
   public ApiResponse<AppointmentPatient> saveAppointment(AppointmentPatient appointment) {
     log.info("Saving appointment for patient ID: " + appointment.getPatientId());
-    FamilyMemberPatient patient = familyMemberRepository.findById(appointment.getPatientId()).orElse(null);
-    //con el mes dia y ttime quitar con el doctorId del horario
+//    FamilyMemberPatient patient = familyMemberRepository.findById(appointment.getPatientId()).orElse(null);
+    //con el mes dia y time quitar con el doctorId del horario
     Long doctorId = appointment.getDoctorId();
     int month = appointment.getDate().getMonthValue();
     int day = appointment.getDate().getDayOfMonth();
     String time = appointment.getTime();
+
+    doctorExample.getDoctors().stream().filter(
+        doctor -> doctor.id().equals(doctorId) && doctor.mes() == month)
+        .findFirst().ifPresent(doctor -> {
+          List<String> tiempos = doctor.timeSlots().get(day);
+          if (tiempos != null && !tiempos.contains(time)) {
+            throw new RuntimeException("The selected time slot is not available for the doctor.");
+          }
+          tiempos.remove(time);
+          boolean dayIsAvailable = !tiempos.isEmpty();
+          doctorExample.updateSlot(doctorId, tiempos,month, day,dayIsAvailable);
+    });
     AppointmentPatient savedAppointment = appointmentPatientRepository.save(appointment);
     return new ApiResponse<>("Appointment saved successfully", null, savedAppointment, true);
   }

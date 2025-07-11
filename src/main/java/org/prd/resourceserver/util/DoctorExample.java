@@ -37,4 +37,25 @@ public class DoctorExample {
   public void addDoctor(DoctorPatientDto doctor) {
     doctors.add(doctor);
   }
+
+  public void updateSlot(Long doctorId, List<String> updatedLot, int mes, int dia, boolean dayIsAvailable) {
+    for (DoctorPatientDto doctor : doctors) {
+      if (doctor.id().equals(doctorId) && doctor.mes() == mes) {
+        Map<Integer, List<String>> timeSlots = doctor.timeSlots();
+        timeSlots.put(dia, updatedLot); // actualiza o reemplaza los horarios del día
+        break;
+      }
+    }
+    if(!dayIsAvailable) {
+      //remove the day from available days
+      for (DoctorPatientDto doctor : doctors) {
+        if (doctor.id().equals(doctorId) && doctor.mes() == mes) {
+          List<Integer> availableDays = doctor.availableDays();
+          availableDays.removeIf(day -> day == dia); // elimina el día de los días disponibles
+          break;
+        }
+      }
+    }
+  }
+
 }
