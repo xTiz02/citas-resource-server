@@ -17,7 +17,7 @@ public class DoctorPatientImpl {
   private DoctorExample doctorExample;
 
 
-  public ApiResponse<List<DoctorPatientDto>> getDoctorAvailability(Long doctorId, int mes){
+  public ApiResponse<DoctorPatientDto> getDoctorAvailability(Long doctorId, int mes){
     log.info("Fetching doctors for doctor ID: " + doctorId + " and month: " + mes);
 
     List<DoctorPatientDto> doctors = doctorExample.getDoctors().stream()
@@ -28,7 +28,7 @@ public class DoctorPatientImpl {
       return new ApiResponse<>("No doctors found for the given criteria", null, null, true);
     }
 
-    return new ApiResponse<>("Doctors found", null, doctors, true);
+    return new ApiResponse<>("Doctors found", null, doctors.get(0), true);
   }
 
   public ApiResponse<List<DoctorPatientDto>> getDoctorsBySpecialty(String specialty) {

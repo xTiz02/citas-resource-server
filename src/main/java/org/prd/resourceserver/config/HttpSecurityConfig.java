@@ -1,5 +1,6 @@
 package org.prd.resourceserver.config;
 
+import java.util.Arrays;
 import org.prd.resourceserver.util.RoleEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,8 +45,8 @@ public class HttpSecurityConfig {
                     authReqConfig.requestMatchers("/authorization/**").permitAll();
                     authReqConfig.requestMatchers("/user/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
-                    authReqConfig.requestMatchers("/user/**").hasAnyAuthority(
-                        RoleEnum.ROLE_ADMIN.name());
+//                    authReqConfig.requestMatchers("/user/**").hasAnyAuthority(
+//                        RoleEnum.ROLE_ADMIN.name());
                     authReqConfig.requestMatchers("/location/all").hasAnyAuthority(
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
                   authReqConfig.requestMatchers("/location/**").hasAnyAuthority(
@@ -62,7 +63,15 @@ public class HttpSecurityConfig {
                             RoleEnum.ROLE_ADMIN.name(),RoleEnum.ROLE_RECEPTIONIST.name());
                   authReqConfig.requestMatchers("/specialty/**").hasAnyAuthority(
                       RoleEnum.ROLE_ADMIN.name());
-                    authReqConfig.anyRequest().authenticated();
+                  authReqConfig.requestMatchers("/user/patient/**").hasAnyAuthority(
+                      RoleEnum.ROLE_PATIENT.name());
+                  authReqConfig.requestMatchers("/doctors/**").hasAnyAuthority(
+                      RoleEnum.ROLE_PATIENT.name());
+                  authReqConfig.requestMatchers("/family-members/**").hasAnyAuthority(
+                      RoleEnum.ROLE_PATIENT.name());
+                  authReqConfig.requestMatchers("/appointments/**").hasAnyAuthority(
+                      RoleEnum.ROLE_PATIENT.name());
+                  authReqConfig.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2ResourceServerConfig -> {
                     oauth2ResourceServerConfig.jwt(jwtConfig ->
@@ -88,17 +97,24 @@ public class HttpSecurityConfig {
     }
 
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(@Value("${spring.web.cors.allowed-origins}") String allowedOrigins) {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration cors = new CorsConfiguration();
-        cors.addAllowedHeader("*");
-        cors.addAllowedMethod("*");
-        cors.setAllowCredentials(true);
-        cors.addAllowedOrigin(allowedOrigins);
-        source.registerCorsConfiguration("/**", cors);
-        return source;
-    }
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource(
+      @Value("${spring.web.cors.allowed-origins}") String allowedOrigins) {
+
+    CorsConfiguration cors = new CorsConfiguration();
+    cors.setAllowedHeaders(Arrays.asList("*"));
+    cors.setAllowedMethods(Arrays.asList("*"));
+    cors.setAllowCredentials(true);
+
+    // Permitir múltiples orígenes separados por comas
+    Arrays.stream(allowedOrigins.split(","))
+        .map(String::trim)
+        .forEach(cors::addAllowedOrigin);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", cors);
+    return source;
+  }
 
     @Bean
    public PasswordEncoder passwordEncoder(){

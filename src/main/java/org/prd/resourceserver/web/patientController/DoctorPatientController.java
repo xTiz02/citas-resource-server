@@ -19,8 +19,8 @@ public class DoctorPatientController {
   @Autowired
   private DoctorPatientImpl doctorPatientImpl;
 
-  @GetMapping("/{doctorId}")
-  public ApiResponse<List<DoctorPatientDto>> getDoctorAvailability(@PathVariable Long doctorId, @RequestParam int mes) {
+  @GetMapping("/{doctorId}/availability")
+  public ApiResponse<DoctorPatientDto> getDoctorAvailability(@PathVariable Long doctorId, @RequestParam int mes) {
     try {
       return doctorPatientImpl.getDoctorAvailability(doctorId, mes);
     } catch (Exception e) {

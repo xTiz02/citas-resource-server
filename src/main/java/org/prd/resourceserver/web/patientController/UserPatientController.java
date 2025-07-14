@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("user/patient")
+@RequestMapping("/user/patient")
 public class UserPatientController {
   @Autowired
   private UserPatientImpl userPatientImpl;

@@ -38,6 +38,9 @@ public class UserPatientImpl {
     log.info("Fetching patient by username: " + username);
     User userPatient = userRepository.findByUsername(username).orElse(null);
     UserPatient patient = patientRepository.findByUserId(userPatient.getId());
+    if(patient == null){
+      throw new RuntimeException("Paciente no encontrado con el nombre de usuario: " + username);
+    }
     return new ApiResponse<>(
         patient != null ? "Paciente encontrado" : "Paciente no encontrado",
         null,

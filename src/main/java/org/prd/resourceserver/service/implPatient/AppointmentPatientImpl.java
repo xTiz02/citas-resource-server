@@ -9,6 +9,7 @@ import org.prd.resourceserver.persistence.patient.entity.UserPatient;
 import org.prd.resourceserver.persistence.patient.repository.AppointmentPatientRepository;
 import org.prd.resourceserver.persistence.patient.repository.FamilyMemberRepository;
 import org.prd.resourceserver.persistence.patient.repository.UserPatientRepository;
+import org.prd.resourceserver.util.AppointmentStatus;
 import org.prd.resourceserver.util.DoctorExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class AppointmentPatientImpl {
   public ApiResponse<List<AppointmentPatient>> getUpcomingAppointmentsByPatientId(String username) {
     log.info("Fetching upcoming appointments for patient ID: " + username);
     UserPatient patient = userPatientImpl.getPatientByUsername(username).data();
-    List<AppointmentPatient> appointments = appointmentPatientRepository.getUpcomingAppointmentsByPatientId(patient.getId());
+    List<AppointmentStatus> statuses = List.of(AppointmentStatus.pendiente, AppointmentStatus.programada, AppointmentStatus.reprogramada);
+    List<AppointmentPatient> appointments = appointmentPatientRepository.getUpcomingAppointmentsByPatientId(patient.getId(),statuses);
 
     if (appointments.isEmpty()) {
       return new ApiResponse<>("No upcoming appointments found for this patient", null, null, false);
