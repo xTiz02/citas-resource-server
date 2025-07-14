@@ -62,4 +62,21 @@ INSERT INTO client_scope (client_id, scope) VALUES (3, 'openid');
 -- "email", "profile", "address", "phone"
 
 INSERT INTO user_patient (id,user_id,family_code, tipo_documento, numero_documento, apellido_paterno, apellido_materno,nombres, fecha_nacimiento, numero_celular, correo_electronico, genero,peso, altura, direccion, contacto_emergencia, telefono_emergencia,created_at, updated_at) VALUES (1,3,'FAMILY0001', 'dni', '12345678', 'Collazos', 'Martinez','Jorge Luis', '2002-01-15', '987654321', 'jorge.collazos@email.com', 'masculino','70', '1.75', 'Av. Principal 123, Lima, Perú', 'María Collazos', '987123456',now(), now());
-INSERT INTO family_member_patient (id,user_id,family_code,parentesco, tipo_documento, numero_documento, apellido_paterno, apellido_materno,nombres, fecha_nacimiento, numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (1,1,'FAMILY0001','', 'dni', '12345678', 'Collazos', 'Martinez','Jorge Luis', '2002-01-15', '987654321', 'jorge.collazos@email.com', 'masculino',now(), now());
+INSERT INTO family_member_patient (id,user_id,family_code,parentesco, tipo_documento, numero_documento, apellido_paterno, apellido_materno,nombres, fecha_nacimiento, numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (1,1,'FAMILY0001','Otro', 'dni', '12345678', 'Collazos', 'Martinez','Jorge Luis', '2002-01-15', '987654321', 'jorge.collazos@email.com', 'masculino',now(), now());
+-- Esposa
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (2, 1, 'FAMILY0001', 'Esposo/a', 'dni', '87654321', 'Lopez', 'Garcia','María Elena', '2003-05-10', '987321654', 'maria.elena@email.com', 'femenino',now(), now());
+
+-- Hijo
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (3, 1, 'FAMILY0001', 'Hijo/a', 'dni', '11223344', 'Collazos', 'Lopez','Andrés Javier', '2020-08-25', '987456123', 'andres.collazos@email.com', 'masculino',now(), now());
+
+-- Madre
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (4, 1, 'FAMILY0001', 'Padre/Madre', 'dni', '55667788', 'Martinez', 'Rojas','Luisa Carmen', '1970-11-03', '987654987', 'luisa.martinez@email.com', 'femenino',now(), now());
+
+-- Hermano
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (5, 1, 'FAMILY0001', 'Hermano/a', 'dni', '99887766', 'Collazos', 'Martinez','Carlos Eduardo', '1998-03-12', '987789321', 'carlos.collazos@email.com', 'masculino',now(), now());
+
+-- Abuelo
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (6, 1, 'FAMILY0001', 'Abuelo/a', 'dni', '33445566', 'Collazos', 'Salazar','Julián Antonio', '1950-06-01', '987963741', 'julian.collazos@email.com', 'masculino',now(), now());
+
+-- Otro
+INSERT INTO family_member_patient (id, user_id, family_code, parentesco, tipo_documento, numero_documento,apellido_paterno, apellido_materno, nombres, fecha_nacimiento,numero_celular, correo_electronico, genero, created_at, updated_at) VALUES (7, 1, 'FAMILY0001', 'Otro', 'dni', '44556677', 'Sanchez', 'Perez','Ana Gabriela', '1995-09-15', '987111222', 'ana.sanchez@email.com', 'femenino',now(), now());

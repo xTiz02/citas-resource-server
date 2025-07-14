@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.prd.resourceserver.persistence.patient.dto.ApiResponse;
 import org.prd.resourceserver.persistence.patient.entity.AppointmentPatient;
-import org.prd.resourceserver.persistence.patient.entity.FamilyMemberPatient;
 import org.prd.resourceserver.persistence.patient.entity.UserPatient;
 import org.prd.resourceserver.persistence.patient.repository.AppointmentPatientRepository;
 import org.prd.resourceserver.persistence.patient.repository.FamilyMemberRepository;
@@ -77,5 +76,31 @@ public class AppointmentPatientImpl {
     AppointmentPatient savedAppointment = appointmentPatientRepository.save(appointment);
     return new ApiResponse<>("Appointment saved successfully", null, savedAppointment, true);
   }
+
+  public ApiResponse<AppointmentPatient> cancelAppointment2(Long id) {
+    log.info("Cancelling appointment with ID: " + id);
+    AppointmentPatient appointment = appointmentPatientRepository.findById(id).orElse(null);
+    if (appointment == null) {
+      return new ApiResponse<>("Appointment not found", null, null, false);
+    }
+    appointment.setStatus(AppointmentStatus.cancelada);
+    AppointmentPatient updatedAppointment = appointmentPatientRepository.save(appointment);
+    doctorExample.getDoctors().stream()
+        .filter(doctor -> doctor.id().equals(appointment.getDoctorId()))
+        .findFirst().ifPresent(doctor -> {
+          int month = appointment.getDate().getMonthValue();
+          int day = appointment.getDate().getDayOfMonth();
+          String time = appointment.getTime();
+          List<String> tiempos = doctor.timeSlots().get(day);
+          if (tiempos != null) {
+            if( !tiempos.contains(time)) {
+              tiempos.add(time);
+            }
+            doctorExample.updateSlot(doctor.id(), tiempos, month, day, true);
+          }
+        });
+    return new ApiResponse<>("Appointment cancelled successfully", null, updatedAppointment, true);
+  }
+
 
 }
