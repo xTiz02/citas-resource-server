@@ -1,5 +1,6 @@
 package org.prd.resourceserver.service.implPatient;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.prd.resourceserver.persistence.patient.dto.ApiResponse;
@@ -46,10 +47,6 @@ public class AppointmentPatientImpl {
     List<AppointmentStatus> statuses = List.of(AppointmentStatus.pendiente, AppointmentStatus.programada, AppointmentStatus.reprogramada);
     List<AppointmentPatient> appointments = appointmentPatientRepository.getUpcomingAppointmentsByPatientId(patient.getId(),statuses);
 
-    if (appointments.isEmpty()) {
-      return new ApiResponse<>("No upcoming appointments found for this patient", null, null, false);
-    }
-
     return new ApiResponse<>("Upcoming appointments found", null, appointments, true);
   }
 
@@ -66,13 +63,15 @@ public class AppointmentPatientImpl {
         doctor -> doctor.id().equals(doctorId) && doctor.mes() == month)
         .findFirst().ifPresent(doctor -> {
           List<String> tiempos = doctor.timeSlots().get(day);
-          if (tiempos != null && !tiempos.contains(time)) {
+          if (tiempos == null || !tiempos.contains(time)) {
             throw new RuntimeException("The selected time slot is not available for the doctor.");
           }
-          tiempos.remove(time);
+          List<String> tiempos2 = new ArrayList<>(tiempos); // ← ahora es mutable
+          tiempos2.remove(time);
           boolean dayIsAvailable = !tiempos.isEmpty();
-          doctorExample.updateSlot(doctorId, tiempos,month, day,dayIsAvailable);
+          doctorExample.updateSlot(doctorId, tiempos2,month, day,dayIsAvailable);
     });
+    appointment.setStatus(AppointmentStatus.pendiente);
     AppointmentPatient savedAppointment = appointmentPatientRepository.save(appointment);
     return new ApiResponse<>("Appointment saved successfully", null, savedAppointment, true);
   }
